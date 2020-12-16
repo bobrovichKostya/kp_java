@@ -1,13 +1,19 @@
 package model;
 
 public class Patient {
+    private int id;
+
     private String name;
+
     private String surname;
     private int age;
     private String disease;
     private boolean type; // амбулаторный/стационар
 
-    public Patient(String name, String surname, int age, String disease, boolean type) {
+    public Patient(){}
+
+    public Patient(int id, String name, String surname, int age, String disease, boolean type) {
+        this.id = id;
         this.name = name;
         this.surname = surname;
         this.age = age;
@@ -35,6 +41,10 @@ public class Patient {
         return type;
     }
 
+    public int getId() {
+        return id;
+    }
+
     public void setName(String name) {
         this.name = name;
     }
@@ -53,5 +63,9 @@ public class Patient {
 
     public void setType(boolean type) {
         this.type = type;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 }
