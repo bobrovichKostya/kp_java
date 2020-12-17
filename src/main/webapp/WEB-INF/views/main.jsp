@@ -6,31 +6,43 @@
 </head>
 <body>
 <form name="deleteButton" method="post" action="/hello">
-    <table border=1>
-        <tr>
-            <th>ID</th>
-            <th>Имя</th>
-            <th>Фамилия</th>
-            <th>Возраст</th>
-            <th>Болезнь</th>
-            <th>Тип</th>
-        </tr>
-        <c:forEach var="pts" items="${patients}">
+    <div align="center">
+        <h1>Пациенты</h1>
+        <h2>
+            <a href="/new">Добавить пациентов</a>
+            <a href="/main">Список пациентов</a>
+        </h2>
+    </div>
+    <div align="center">
+        <table border="1" cellpadding="5">
+            <caption><h2>Список пацентов</h2></caption>
             <tr>
-                <td><input type="checkbox" name="id" value="${pts.id}"></td>
-                <td>${pts.name}</td>
-                <td>${pts.surname}</td>
-                <td>${pts.age}</td>
-                <td>${pts.disease}</td>
-                <td>${pts.type}</td>
+                <th>ID</th>
+                <th>Имя</th>
+                <th>Фамилия</th>
+                <th>Возраст</th>
+                <th>Болезнь</th>
+                <th>Тип</th>
             </tr>
-        </c:forEach>
-        <input type="submit" name="delete" value="Action">
-        <input type="checkbox" name="check" value="delete">
-        <%-- NPE --%>
-        <input type="checkbox" name="check" value="edit">
+            <c:forEach var="pts" items="${patients}">
+                <tr>
+                    <td><input type="checkbox" name="id" value="${pts.id}">${pts.id}</td>
+                    <td>${pts.name}</td>
+                    <td>${pts.surname}</td>
+                    <td>${pts.age}</td>
+                    <td>${pts.disease}</td>
+                    <td>${pts.type}</td>
+                    <td>
+                        <a href="/edit?id=${pts.id}">Редактировать</a>
+                        &nbsp&nbsp&nbsp&nbsp
+                        <a href="/delete?id=${pts.id}">Удалить</a>
+                        <a>Удалить</a>
+                    </td>
+                </tr>
+            </c:forEach>
 
-    </table>
+        </table>
+    </div>
 </form>
 </body>
 </html>

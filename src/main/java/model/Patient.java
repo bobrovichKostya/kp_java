@@ -21,6 +21,18 @@ public class Patient {
         this.type = type;
     }
 
+    @Override
+    public String toString() {
+        return "Patient{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", surname='" + surname + '\'' +
+                ", age=" + age +
+                ", disease='" + disease + '\'' +
+                ", type=" + type +
+                '}';
+    }
+
     public String getName() {
         return name;
     }

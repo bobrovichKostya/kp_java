@@ -11,48 +11,81 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.sql.SQLException;
+import java.util.List;
 
 
-@WebServlet("/hello")
+@WebServlet(urlPatterns = {"/main", "/new", "/edit", "/update"})
 public class MainServlet extends HttpServlet {
-    Patient patient = new Patient(100, "BOBBBR", "AAAAAAAAA", 20, "tdyuj", true);
+    private String url = "jdbc:mysql://localhost:3306/test1?serverTimezone=Europe/Minsk&useSSL=false";
+    private String username = "root";
+    private String password = "root";
+    private PatientDAO patientDAO;
+
+
+    @Override
+    public void init() {
+        patientDAO = new PatientDAOImpl(url, username, password);
+    }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        PatientDAO patientDAO = new PatientDAOImpl();
-        req.setAttribute("patients", patientDAO.getAllPatients());
-        RequestDispatcher requestDispatcher = getServletContext().getRequestDispatcher("/WEB-INF/views/main.jsp");
-        requestDispatcher.forward(req, resp);
-
+        String action = req.getServletPath();
+        try{
+            switch (action){
+                case "/new":
+                    showNewForm(req, resp);
+                    break;
+                case "/edit":
+                    showEditForm(req, resp);
+                    break;
+                case "/update":
+                    editPatient(req, resp);
+                    break;
+                default:
+                    allPations(req, resp);
+                    break;
+            }
+        } catch (SQLException e){
+            throw new ServletException();
+        }
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String action = req.getParameter("check");
+        doGet(req, resp);
+    }
 
-        if (action.equals("delete")) {
-            String[] idList = req.getParameterValues("id");
-            //TODO реализвать нормально удаление нескольких эелементов и редактирование ( по одному )
-            if (idList != null && idList.length > 0) {
-                PatientDAO patientDAO = new PatientDAOImpl();
-                for (int i = 0; i < idList.length; i++) {
-                    patientDAO.deletePatient(Integer.parseInt(idList[i]));
-                }
-            }
-            doGet(req, resp);
-        } else if (action.equals("edit")) {
-            Patient patient1 = null;
-            String[] idList = req.getParameterValues("id");
-            if (idList != null && idList.length > 0) {
-                PatientDAO patientDAO = new PatientDAOImpl();
-                for (int i = 0; i < idList.length; i++) {
-                    patient1 = patientDAO.getById(Integer.parseInt(idList[i]));
-                }
-            }
-            req.setAttribute("editPatient", patient1);
-            RequestDispatcher requestDispatcher = getServletContext().getRequestDispatcher("/EditServlet");
-            requestDispatcher.forward(req, resp);
-        }
+    private void allPations(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException, SQLException {
+        List<Patient> patientList = patientDAO.getAllPatients();
+        req.setAttribute("patients", patientList);
+        RequestDispatcher requestDispatcher = req.getRequestDispatcher("/WEB-INF/views/main.jsp");
+        requestDispatcher.forward(req, resp);
+    }
 
+    private void showNewForm(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException{
+        RequestDispatcher requestDispatcher = req.getRequestDispatcher("/WEB-INF/views/edit.jsp");
+        requestDispatcher.forward(req, resp);
+    }
+
+    private void showEditForm(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException, SQLException {
+        int id = Integer.parseInt(req.getParameter("id"));
+        Patient currentPatient = patientDAO.getById(id);
+        req.setAttribute("patient", currentPatient);
+        RequestDispatcher requestDispatcher = req.getRequestDispatcher("/WEB-INF/views/edit.jsp");
+        requestDispatcher.forward(req, resp);
+    }
+
+    private void editPatient(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException, SQLException {
+        int id = Integer.parseInt(req.getParameter("id"));
+        String name = req.getParameter("name");
+        String surname = req.getParameter("surname");
+        int age = Integer.parseInt(req.getParameter("age"));
+        String disease = req.getParameter("disease");
+        boolean type = Boolean.parseBoolean(req.getParameter("type"));
+
+        Patient patient = new Patient(id, name, surname, age, disease, type);
+        patientDAO.editPatient(patient);
+        resp.sendRedirect("/main");
     }
 }
