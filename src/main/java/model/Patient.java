@@ -2,9 +2,7 @@ package model;
 
 public class Patient {
     private int id;
-
     private String name;
-
     private String surname;
     private int age;
     private String disease;
@@ -21,16 +19,12 @@ public class Patient {
         this.type = type;
     }
 
-    @Override
-    public String toString() {
-        return "Patient{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", surname='" + surname + '\'' +
-                ", age=" + age +
-                ", disease='" + disease + '\'' +
-                ", type=" + type +
-                '}';
+    public Patient(String name, String surname, int age, String disease, boolean type) {
+        this.name = name;
+        this.surname = surname;
+        this.age = age;
+        this.disease = disease;
+        this.type = type;
     }
 
     public String getName() {

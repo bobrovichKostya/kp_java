@@ -12,14 +12,14 @@ public class PatientDAOImpl implements PatientDAO {
     String password;
     Connection connection;
 
-    public PatientDAOImpl(String url, String username, String password){
+    public PatientDAOImpl(String url, String username, String password) {
         this.url = url;
         this.username = username;
         this.password = password;
     }
 
     private void connect() throws SQLException {
-        if(connection == null || connection.isClosed()) {
+        if (connection == null || connection.isClosed()) {
             try {
                 Class.forName("com.mysql.cj.jdbc.Driver").newInstance();
             } catch (InstantiationException | ClassNotFoundException | IllegalAccessException e) {
@@ -29,15 +29,15 @@ public class PatientDAOImpl implements PatientDAO {
         }
     }
 
-    private void disconnect() throws SQLException{
-        if(connection != null && !connection.isClosed()){
+    private void disconnect() throws SQLException {
+        if (connection != null && !connection.isClosed()) {
             connection.close();
         }
     }
 
     public List<Patient> getAllPatients() throws SQLException {
         List<Patient> patients = new ArrayList<Patient>();
-        String sql = "SELECT id ,name, surname FROM t1";
+        String sql = "SELECT id ,name, surname, age, disease, type FROM patients";
 
         connect();
 
@@ -45,15 +45,15 @@ public class PatientDAOImpl implements PatientDAO {
         ResultSet resultSet = statement.executeQuery(sql);
 
         while (resultSet.next()) {
-                int id = resultSet.getInt("id");
-                String name = resultSet.getString("name");
-                String surname = resultSet.getString("surname");
-                int age = 20;
-                String disease = "head";
-                boolean type = false;
+            int id = resultSet.getInt("id");
+            String name = resultSet.getString("name");
+            String surname = resultSet.getString("surname");
+            int age = Integer.parseInt(resultSet.getString("age"));
+            String disease = resultSet.getString("disease");
+            boolean type = resultSet.getBoolean("type");
 
-                patients.add(new Patient(id, name, surname, age, disease, type));
-            }
+            patients.add(new Patient(id, name, surname, age, disease, type));
+        }
 
         resultSet.close();
         statement.close();
@@ -63,31 +63,25 @@ public class PatientDAOImpl implements PatientDAO {
     }
 
     public void addPatient(Patient patient) throws SQLException {
-        String sql = "insert into t1 (name, surname) values(?, ?)";
+        String sql = "insert into patients (name, surname, age, disease, type) values(?, ?, ?, ?, ?)";
 
         connect();
 
         PreparedStatement preparedStatement = connection.prepareStatement(sql);
         preparedStatement.setString(1, patient.getName());
         preparedStatement.setString(2, patient.getSurname());
+        preparedStatement.setInt(3, patient.getAge());
+        preparedStatement.setString(4, patient.getDisease());
+        preparedStatement.setBoolean(5, patient.isType());
         int add = preparedStatement.executeUpdate();
 
         preparedStatement.close();
         disconnect();
 
-        /*try (Connection connection = DriverManager.getConnection(url, username, password)) {
-            String sql = "insert into t1 (name, surname) values(?, ?)";
-            PreparedStatement preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setString(1, patient.getName());
-            preparedStatement.setString(2, patient.getSurname());
-            int add = preparedStatement.executeUpdate();
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        }*/
     }
 
     public void deletePatient(int id) throws SQLException {
-        String sql = "delete from t1 where id=?";
+        String sql = "delete from patients where id=?";
 
         connect();
 
@@ -101,14 +95,17 @@ public class PatientDAOImpl implements PatientDAO {
     }
 
     public void editPatient(Patient patient) throws SQLException {
-        String sql = "update test1 set name = ?, surname = ? where id = ?";
+        String sql = "update patients set name = ?, surname = ?, age = ?, disease = ?, type = ? where id = ?";
 
         connect();
 
         PreparedStatement preparedStatement = connection.prepareStatement(sql);
         preparedStatement.setString(1, patient.getName());
         preparedStatement.setString(2, patient.getSurname());
-        preparedStatement.setString(3, String.valueOf(patient.getId()));
+        preparedStatement.setInt(3, patient.getAge());
+        preparedStatement.setString(4, patient.getDisease());
+        preparedStatement.setBoolean(5, patient.isType());
+        preparedStatement.setString(6, String.valueOf(patient.getId()));
 
         int i = preparedStatement.executeUpdate();
 
@@ -119,7 +116,7 @@ public class PatientDAOImpl implements PatientDAO {
     public Patient getById(int id) throws SQLException {
         Patient patient = new Patient();
         patient.setId(id);
-        String sql = "select name, surname from t1 where id = ?";
+        String sql = "select name, surname, age, disease, type from patients where id = ?";
 
         connect();
 
@@ -129,9 +126,9 @@ public class PatientDAOImpl implements PatientDAO {
         while (resultSet.next()) {
             patient.setName(resultSet.getString("name"));
             patient.setSurname(resultSet.getString("name"));
-            patient.setAge(20);
-            patient.setDisease("head");
-            patient.setType(false);
+            patient.setAge(resultSet.getInt("age"));
+            patient.setDisease(resultSet.getString("disease"));
+            patient.setType(resultSet.getBoolean("type"));
         }
 
         resultSet.close();

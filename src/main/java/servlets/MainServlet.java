@@ -15,7 +15,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 
-@WebServlet(urlPatterns = {"/main", "/new", "/edit", "/update"})
+@WebServlet(urlPatterns = {"/main", "/new", "/edit", "/update", "/delete", "/insert"})
 public class MainServlet extends HttpServlet {
     private String url = "jdbc:mysql://localhost:3306/test1?serverTimezone=Europe/Minsk&useSSL=false";
     private String username = "root";
@@ -29,6 +29,11 @@ public class MainServlet extends HttpServlet {
     }
 
     @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        doGet(req, resp);
+    }
+
+    @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String action = req.getServletPath();
         try{
@@ -39,21 +44,40 @@ public class MainServlet extends HttpServlet {
                 case "/edit":
                     showEditForm(req, resp);
                     break;
+                case "/insert":
+                    addPatient(req, resp);
+                    break;
                 case "/update":
                     editPatient(req, resp);
                     break;
-                default:
+                case "/delete":
+                    deletePatient(req, resp);
+                    break;
+                case "/main":
                     allPations(req, resp);
                     break;
             }
         } catch (SQLException e){
-            throw new ServletException();
+            System.err.println(e);
         }
     }
 
-    @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        doGet(req, resp);
+    private void addPatient(HttpServletRequest req, HttpServletResponse resp) throws SQLException, IOException {
+        String name = req.getParameter("name");
+        String surname = req.getParameter("surname");
+        int age = Integer.parseInt(req.getParameter("age"));
+        String disease = req.getParameter("disease");
+        boolean type = Boolean.parseBoolean(req.getParameter("type"));
+
+        Patient patient = new Patient(name, surname, age, disease, type);
+        patientDAO.addPatient(patient);
+        resp.sendRedirect("/main");
+    }
+
+    private void deletePatient(HttpServletRequest req, HttpServletResponse resp) throws SQLException, IOException {
+        int id = Integer.parseInt(req.getParameter("id"));
+        patientDAO.deletePatient(id);
+        resp.sendRedirect("/main");
     }
 
     private void allPations(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException, SQLException {
@@ -76,7 +100,7 @@ public class MainServlet extends HttpServlet {
         requestDispatcher.forward(req, resp);
     }
 
-    private void editPatient(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException, SQLException {
+    private void editPatient(HttpServletRequest req, HttpServletResponse resp) throws IOException, SQLException {
         int id = Integer.parseInt(req.getParameter("id"));
         String name = req.getParameter("name");
         String surname = req.getParameter("surname");

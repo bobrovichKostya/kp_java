@@ -31,12 +31,18 @@
                     <td>${pts.surname}</td>
                     <td>${pts.age}</td>
                     <td>${pts.disease}</td>
-                    <td>${pts.type}</td>
+                    <td>
+                        <c:if test="${pts.type == true}">
+                            Стационар
+                        </c:if>
+                        <c:if test="${pts.type == false}">
+                            Амбулаторный
+                        </c:if>
+                    </td>
                     <td>
                         <a href="/edit?id=${pts.id}">Редактировать</a>
                         &nbsp&nbsp&nbsp&nbsp
                         <a href="/delete?id=${pts.id}">Удалить</a>
-                        <a>Удалить</a>
                     </td>
                 </tr>
             </c:forEach>
