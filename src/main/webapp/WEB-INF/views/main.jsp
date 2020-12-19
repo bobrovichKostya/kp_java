@@ -8,27 +8,25 @@
 <form name="deleteButton" method="post" action="/hello">
     <div align="center">
         <h1>Пациенты</h1>
-        <h2>
+        <h3>
             <a href="/new">Добавить пациентов</a>
             <a href="/main">Список пациентов</a>
-        </h2>
+        </h3>
     </div>
     <div align="center">
         <table border="1" cellpadding="5">
             <caption><h2>Список пацентов</h2></caption>
             <tr>
-                <th>ID</th>
-                <th>Имя</th>
                 <th>Фамилия</th>
+                <th>Имя</th>
                 <th>Возраст</th>
                 <th>Болезнь</th>
                 <th>Тип</th>
             </tr>
             <c:forEach var="pts" items="${patients}">
                 <tr>
-                    <td><input type="checkbox" name="id" value="${pts.id}">${pts.id}</td>
+                    <td><a href="/persPatient?id=${pts.id}">${pts.surname}</a></td>
                     <td>${pts.name}</td>
-                    <td>${pts.surname}</td>
                     <td>${pts.age}</td>
                     <td>${pts.disease}</td>
                     <td>

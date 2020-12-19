@@ -15,7 +15,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 
-@WebServlet(urlPatterns = {"/main", "/new", "/edit", "/update", "/delete", "/insert"})
+@WebServlet(urlPatterns = {"/main", "/new", "/edit", "/update", "/delete", "/insert", "/persPatient"})
 public class MainServlet extends HttpServlet {
     private String url = "jdbc:mysql://localhost:3306/test1?serverTimezone=Europe/Minsk&useSSL=false";
     private String username = "root";
@@ -42,7 +42,7 @@ public class MainServlet extends HttpServlet {
                     showNewForm(req, resp);
                     break;
                 case "/edit":
-                    showEditForm(req, resp);
+                    showEditForm(req, resp, false);
                     break;
                 case "/insert":
                     addPatient(req, resp);
@@ -53,6 +53,9 @@ public class MainServlet extends HttpServlet {
                 case "/delete":
                     deletePatient(req, resp);
                     break;
+                case "/persPatient":
+                    showEditForm(req, resp, true);
+                    break;
                 case "/main":
                     allPations(req, resp);
                     break;
@@ -61,6 +64,7 @@ public class MainServlet extends HttpServlet {
             System.err.println(e);
         }
     }
+
 
     private void addPatient(HttpServletRequest req, HttpServletResponse resp) throws SQLException, IOException {
         String name = req.getParameter("name");
@@ -92,11 +96,17 @@ public class MainServlet extends HttpServlet {
         requestDispatcher.forward(req, resp);
     }
 
-    private void showEditForm(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException, SQLException {
+    private void showEditForm(HttpServletRequest req, HttpServletResponse resp, boolean showFullPage) throws ServletException, IOException, SQLException {
         int id = Integer.parseInt(req.getParameter("id"));
         Patient currentPatient = patientDAO.getById(id);
         req.setAttribute("patient", currentPatient);
-        RequestDispatcher requestDispatcher = req.getRequestDispatcher("/WEB-INF/views/edit.jsp");
+        RequestDispatcher requestDispatcher = null;
+        if(showFullPage){
+            requestDispatcher = req.getRequestDispatcher("/WEB-INF/views/personalPatient.jsp");
+        } else{
+             requestDispatcher = req.getRequestDispatcher("/WEB-INF/views/edit.jsp");
+        }
+
         requestDispatcher.forward(req, resp);
     }
 

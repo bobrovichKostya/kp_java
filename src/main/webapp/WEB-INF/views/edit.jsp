@@ -7,10 +7,10 @@
 <body>
     <div align="center">
         <h1>Форма пациента</h1>
-        <h2>
+        <h3>
             <a href="/new">Добавить пациентов</a>
             <a href="/main">Список пациентов</a>
-        </h2>
+        </h3>
     </div>
     <div align="center">
         <c:if test="${patient != null}">
@@ -50,11 +50,16 @@
             <tr>
                 <th>Тип</th>
                 <td>
-                    <input type="text" name="type" value="${patient.type}" />
+                    <c:if test="${pts.type == true}">
+                        <input type="text" name="disease" value="Стационар" />
+                    </c:if>
+                    <c:if test="${pts.type == false}">
+                        <input type="text" name="disease" value="Амбулаторный" />
+                    </c:if>
                 </td>
             </tr>
             <tr>
-                <td>
+                <td colspan="2">
                     <input type="submit" value="save">
                 </td>
             </tr>
