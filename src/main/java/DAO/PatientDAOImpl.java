@@ -37,7 +37,7 @@ public class PatientDAOImpl implements PatientDAO {
 
     public List<Patient> getAllPatients() throws SQLException {
         List<Patient> patients = new ArrayList<Patient>();
-        String sql = "SELECT id ,name, surname, age, disease, type FROM patients";
+        String sql = "SELECT id ,name, surname, age, disease, type, doc_id FROM patients";
 
         connect();
 
@@ -51,8 +51,9 @@ public class PatientDAOImpl implements PatientDAO {
             int age = Integer.parseInt(resultSet.getString("age"));
             String disease = resultSet.getString("disease");
             boolean type = resultSet.getBoolean("type");
+            int docId = resultSet.getInt("doc_id");
 
-            patients.add(new Patient(id, name, surname, age, disease, type));
+            patients.add(new Patient(id, name, surname, age, disease, type, docId));
         }
 
         resultSet.close();
@@ -63,7 +64,7 @@ public class PatientDAOImpl implements PatientDAO {
     }
 
     public void addPatient(Patient patient) throws SQLException {
-        String sql = "insert into patients (name, surname, age, disease, type) values(?, ?, ?, ?, ?)";
+        String sql = "insert into patients (name, surname, age, disease, type, doc_id) values(?, ?, ?, ?, ?, ?)";
 
         connect();
 
@@ -73,6 +74,7 @@ public class PatientDAOImpl implements PatientDAO {
         preparedStatement.setInt(3, patient.getAge());
         preparedStatement.setString(4, patient.getDisease());
         preparedStatement.setBoolean(5, patient.isType());
+        preparedStatement.setInt(6, patient.getDocId());
         int add = preparedStatement.executeUpdate();
 
         preparedStatement.close();
@@ -95,7 +97,7 @@ public class PatientDAOImpl implements PatientDAO {
     }
 
     public void editPatient(Patient patient) throws SQLException {
-        String sql = "update patients set name = ?, surname = ?, age = ?, disease = ?, type = ? where id = ?";
+        String sql = "update patients set name = ?, surname = ?, age = ?, disease = ?, type = ?, doc_id = ? where id = ?";
 
         connect();
 
@@ -105,7 +107,8 @@ public class PatientDAOImpl implements PatientDAO {
         preparedStatement.setInt(3, patient.getAge());
         preparedStatement.setString(4, patient.getDisease());
         preparedStatement.setBoolean(5, patient.isType());
-        preparedStatement.setString(6, String.valueOf(patient.getId()));
+        preparedStatement.setInt(6, patient.getDocId());
+        preparedStatement.setString(7, String.valueOf(patient.getId()));
 
         int i = preparedStatement.executeUpdate();
 
@@ -116,7 +119,7 @@ public class PatientDAOImpl implements PatientDAO {
     public Patient getById(int id) throws SQLException {
         Patient patient = new Patient();
         patient.setId(id);
-        String sql = "select name, surname, age, disease, type from patients where id = ?";
+        String sql = "select name, surname, age, disease, type, doc_id from patients where id = ?";
 
         connect();
 
@@ -125,10 +128,11 @@ public class PatientDAOImpl implements PatientDAO {
         ResultSet resultSet = preparedStatement.executeQuery();
         while (resultSet.next()) {
             patient.setName(resultSet.getString("name"));
-            patient.setSurname(resultSet.getString("name"));
+            patient.setSurname(resultSet.getString("surname"));
             patient.setAge(resultSet.getInt("age"));
             patient.setDisease(resultSet.getString("disease"));
             patient.setType(resultSet.getBoolean("type"));
+            patient.setDocId(resultSet.getInt("doc_id"));
         }
 
         resultSet.close();

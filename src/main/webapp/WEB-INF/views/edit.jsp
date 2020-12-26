@@ -24,15 +24,15 @@
                 <input type="hidden" name="id" value="${patient.id}" />
             </c:if>
             <tr>
-                <th>Имя</th>
-                <td>
-                    <input type="text" name="name" value="${patient.name}" />
-                </td>
-            </tr>
-            <tr>
                 <th>Фамилия</th>
                 <td>
                     <input type="text" name="surname" value="${patient.surname}" />
+                </td>
+            </tr>
+            <tr>
+                <th>Имя</th>
+                <td>
+                    <input type="text" name="name" value="${patient.name}" />
                 </td>
             </tr>
             <tr>
@@ -42,7 +42,7 @@
                 </td>
             </tr>
             <tr>
-                <th>Болезнь</th>
+                <th>Диагноз</th>
                 <td>
                     <input type="text" name="disease" value="${patient.disease}" />
                 </td>
@@ -50,12 +50,33 @@
             <tr>
                 <th>Тип</th>
                 <td>
-                    <c:if test="${pts.type == true}">
-                        <input type="text" name="disease" value="Стационар" />
-                    </c:if>
-                    <c:if test="${pts.type == false}">
-                        <input type="text" name="disease" value="Амбулаторный" />
-                    </c:if>
+                    <select size="1" name="type">
+                        <c:if test="${patient.type == true}">
+                            <option selected value="true">Стационар</option>
+                            <option value="false">Амбулаторный</option>
+                        </c:if>
+                        <c:if test="${patient.type == false}">
+                            <option value="true">Стационар</option>
+                            <option selected value="false">Амбулаторный</option>
+                        </c:if>
+                        <c:if test="${patient.type == null}">
+                            <option value="true">Стационар</option>
+                            <option value="false">Амбулаторный</option>
+                        </c:if>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <th>Лечащий врач</th>
+                <td>
+                    <select size="1" name="doc">
+                        <c:forEach var="doc" items="${doctors}">
+                            <c:if test="${patient.docId == doc.id}">
+                                <option selected value="${doc.id}">${doc.surname}&nbsp${doc.name}</option>
+                            </c:if>
+                            <option value="${doc.id}">${doc.surname}&nbsp${doc.name}</option>
+                        </c:forEach>
+                    </select>
                 </td>
             </tr>
             <tr>

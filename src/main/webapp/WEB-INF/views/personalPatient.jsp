@@ -19,44 +19,38 @@
                     <input type="hidden" name="id" value="${patient.id}" />
                 </c:if>
                 <tr>
-                    <th>Имя</th>
+                    <th>Фамилия</th>
                     <td>
-                        <input type="text" name="name" value="${patient.name}" />
+                        ${patient.surname}
                     </td>
                 </tr>
                 <tr>
-                    <th>Фамилия</th>
+                    <th>Имя</th>
                     <td>
-                        <input type="text" name="surname" value="${patient.surname}" />
+                        ${patient.name}
                     </td>
                 </tr>
                 <tr>
                     <th>Возраст</th>
                     <td>
-                        <input type="text" name="age" value="${patient.age}" />
+                        ${patient.age}
                     </td>
                 </tr>
                 <tr>
-                    <th>Болезнь</th>
+                    <th>Диагноз</th>
                     <td>
-                        <input type="text" name="disease" value="${patient.disease}" />
+                        ${patient.disease}
                     </td>
                 </tr>
                 <tr>
                     <th>Тип</th>
                     <td>
-                        <c:if test="${pts.type == true}">
-                            <input type="text" name="disease" value="Стационар" />
+                        <c:if test="${patient.type == true}">
+                            Стационар
                         </c:if>
-                        <c:if test="${pts.type == false}">
-                            <input type="text" name="disease" value="Амбулаторный" />
+                        <c:if test="${patient.type == false}">
+                            Амбулаторный
                         </c:if>
-                    </td>
-                </tr>
-                <tr>
-                    <th>Анамнез</th>
-                    <td>
-                        <input type="text" name="anamnes" value="" />
                     </td>
                 </tr>
                 <tr>

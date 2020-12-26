@@ -10,7 +10,9 @@
         <h1>Пациенты</h1>
         <h3>
             <a href="/new">Добавить пациентов</a>
+            <a href="/newMed">Добавить лекарство</a>
             <a href="/main">Список пациентов</a>
+            <a href="/medList">Список лекарств</a>
         </h3>
     </div>
     <div align="center">
@@ -20,7 +22,7 @@
                 <th>Фамилия</th>
                 <th>Имя</th>
                 <th>Возраст</th>
-                <th>Болезнь</th>
+                <th>Диагноз</th>
                 <th>Тип</th>
             </tr>
             <c:forEach var="pts" items="${patients}">
